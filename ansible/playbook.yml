@@ -24,6 +24,7 @@
          - ruby-devel
          - python-pip
          - rubygems
+         - golang
 
      - name: install gems
        gem: name={{ item }} state=present user_install=no
