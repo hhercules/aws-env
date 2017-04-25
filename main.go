@@ -1,51 +1,21 @@
+// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package main
 
-import (
-	"fmt"
-	"os"
-	"path/filepath"
-
-	"github.com/go-ini/ini"
-)
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func credentialsFilename() string {
-	return filepath.Join(userHomeDir(), ".aws", "credentials")
-}
-
-func configFilename() string {
-	return filepath.Join(userHomeDir(), ".aws", "config")
-}
-
-func userHomeDir() string {
-	homeDir := os.Getenv("HOME") // *nix
-	if len(homeDir) == 0 {       // windows
-		homeDir = os.Getenv("USERPROFILE")
-	}
-
-	return homeDir
-}
+import "github.com/hhercules/aws-env/cmd"
 
 func main() {
-	fmt.Println("So it begins")
-
-	cfg, err := ini.Load(credentialsFilename())
-	check(err)
-
-	// sections := cfg.Sections()
-	profiles := cfg.SectionStrings()
-
-	// fmt.Println(sections)
-	// fmt.Printf("%v", profiles)
-
-	for _, profile := range profiles {
-		if profile != "DEFAULT" {
-			fmt.Printf("%s\n", profile)
-		}
-	}
+	cmd.Execute()
 }
