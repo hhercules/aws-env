@@ -6,12 +6,36 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
+func credentialsFilename() string {
+	return filepath.Join(userHomeDir(), ".aws", "credentials")
+}
+
+func configFilename() string {
+	return filepath.Join(userHomeDir(), ".aws", "config")
+}
+
+func userHomeDir() string {
+	homeDir := os.Getenv("HOME") // *nix
+	if len(homeDir) == 0 {       // windows
+		homeDir = os.Getenv("USERPROFILE")
+	}
+
+	return homeDir
+}
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{

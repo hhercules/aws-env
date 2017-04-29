@@ -5,23 +5,49 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/go-ini/ini"
 	"github.com/spf13/cobra"
 )
 
 // exportCmd represents the export command
 var exportCmd = &cobra.Command{
-	Use:   "export",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "export <profile>",
+	Short: "Export the aws credentials to be read in by environment",
+	Long: `Export aws credentials to be set as environment variables
+If no argument is passed the default profile is exported.
+`,
+	Example: `
+aws-env export testenv
+export AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXX
+export AWS_SECRET_ACCESS_KEY=YYYYYYYYYYYYYYYYYYYYYYYYYYY
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
-		fmt.Println("export called")
+		var profileName string
+		cfg, err := ini.Load(credentialsFilename())
+		check(err)
+
+		if len(args) == 0 {
+			profileName = "default"
+		} else if len(args) == 1 {
+			profileName = args[0]
+		} else {
+			fmt.Println("Too many arguments passed, failing ...")
+			os.Exit(-1)
+		}
+
+		profile, err := cfg.GetSection(profileName)
+		check(err)
+
+		key, err := profile.GetKey("aws_access_key_id")
+		fmt.Printf("export AWS_ACCESS_KEY_ID=%s\n", key)
+		check(err)
+
+		secret, err := profile.GetKey("aws_secret_access_key")
+		fmt.Printf("export AWS_SECRET_ACCESS_KEY=%s\n", secret)
+		check(err)
 	},
 }
 
