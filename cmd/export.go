@@ -22,23 +22,32 @@ If no argument is passed the default profile is exported.
 aws-env export testenv
 export AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXX
 export AWS_SECRET_ACCESS_KEY=YYYYYYYYYYYYYYYYYYYYYYYYYYY
+export AWS_DEFAULT_REGION=xx-xxxxxx-x
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
-		var profileName string
-		cfg, err := ini.Load(credentialsFilename())
+		var profileName, profileRegion string
+		iniCreds, err := ini.Load(credentialsFilename())
+		check(err)
+
+		iniConfig, err := ini.Load(configFilename())
 		check(err)
 
 		if len(args) == 0 {
 			profileName = "default"
+			profileRegion = profileName
 		} else if len(args) == 1 {
 			profileName = args[0]
+			profileRegion = "profile " + profileName
 		} else {
 			fmt.Println("Too many arguments passed, failing ...")
 			os.Exit(-1)
 		}
 
-		profile, err := cfg.GetSection(profileName)
+		profile, err := iniCreds.GetSection(profileName)
+		check(err)
+
+		region, err := iniConfig.GetSection(profileRegion)
 		check(err)
 
 		key, err := profile.GetKey("aws_access_key_id")
@@ -47,6 +56,10 @@ export AWS_SECRET_ACCESS_KEY=YYYYYYYYYYYYYYYYYYYYYYYYYYY
 
 		secret, err := profile.GetKey("aws_secret_access_key")
 		fmt.Printf("export AWS_SECRET_ACCESS_KEY=%s\n", secret)
+		check(err)
+
+		regionValue, err := region.GetKey("region")
+		fmt.Printf("export AWS_DEFAULT_REGION=%s\n", regionValue)
 		check(err)
 	},
 }
