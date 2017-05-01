@@ -48,7 +48,10 @@ export AWS_DEFAULT_REGION=xx-xxxxxx-x
 		check(err)
 
 		region, err := iniConfig.GetSection(profileRegion)
-		check(err)
+		if err != nil {
+			region, err = iniConfig.GetSection("default")
+			check(err)
+		}
 
 		key, err := profile.GetKey("aws_access_key_id")
 		fmt.Printf("export AWS_ACCESS_KEY_ID=%s\n", key)

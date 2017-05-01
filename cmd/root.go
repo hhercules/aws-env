@@ -41,12 +41,7 @@ func userHomeDir() string {
 var RootCmd = &cobra.Command{
 	Use:   "aws-env",
 	Short: "Gathers aws settings in $HOME/.aws and exports them, helping to quickly switch between accounts.",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  `aws-env will gather your profiles and either list them out for you, or export them. It will also gather the region defined for that profile or gather what is setup for default. `,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) {},
