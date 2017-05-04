@@ -27,11 +27,20 @@ export AWS_DEFAULT_REGION=xx-xxxxxx-x
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
 		var profileName, profileRegion string
+		var exportRegion bool
+
 		iniCreds, err := ini.Load(credentialsFilename())
-		check(err)
+		if err != nil {
+			fmt.Printf("We could not open %s\n", credentialsFilename())
+			os.Exit(-1)
+		}
 
 		iniConfig, err := ini.Load(configFilename())
-		check(err)
+		if err != nil {
+			exportRegion = false
+		} else {
+			exportRegion = true
+		}
 
 		if len(args) == 0 {
 			profileName = "default"
@@ -47,23 +56,26 @@ export AWS_DEFAULT_REGION=xx-xxxxxx-x
 		profile, err := iniCreds.GetSection(profileName)
 		check(err)
 
-		region, err := iniConfig.GetSection(profileRegion)
-		if err != nil {
-			region, err = iniConfig.GetSection("default")
-			check(err)
-		}
-
 		key, err := profile.GetKey("aws_access_key_id")
-		fmt.Printf("export AWS_ACCESS_KEY_ID=%s\n", key)
 		check(err)
+		fmt.Printf("export AWS_ACCESS_KEY_ID=%s\n", key)
 
 		secret, err := profile.GetKey("aws_secret_access_key")
+		check(err)
 		fmt.Printf("export AWS_SECRET_ACCESS_KEY=%s\n", secret)
-		check(err)
 
-		regionValue, err := region.GetKey("region")
-		fmt.Printf("export AWS_DEFAULT_REGION=%s\n", regionValue)
-		check(err)
+		if exportRegion == true {
+			region, err := iniConfig.GetSection(profileRegion)
+			if err != nil {
+				region, err = iniConfig.GetSection("default")
+				check(err)
+			}
+
+			regionValue, err := region.GetKey("region")
+			check(err)
+			fmt.Printf("export AWS_DEFAULT_REGION=%s\n", regionValue)
+		}
+
 	},
 }
 
