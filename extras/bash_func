@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+function unset-aws () {
+   unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY && PS1=$(echo "$PS1" |sed -e 's|\\\[\\e\[1\;[[:digit:]]\+m\\\]\[.*\]\\\[\\e\[m\\\] ||g')
+}
