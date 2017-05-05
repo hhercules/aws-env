@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# aliases
+alias aws-prod='$(aws-env export aws-prod) && source ~/.bash_aws'
+alias aws-stg='$(aws-env export aws-stg) && source ~/.bash_aws'
+alias aws-dev='$(aws-env export aws-dev) && source ~/.bash_aws'
+alias aws-2-dev='$(aws-env export aws-2-dev) && source ~/.bash_aws'
+alias aws-2-prod='$(aws-env export aws-2-prod) && source ~/.bash_aws'
